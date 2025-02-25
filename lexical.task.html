@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexical Decision Task</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        #word { font-size: 2em; margin: 20px; display: none; }
+        button { font-size: 1.2em; padding: 10px 20px; margin: 10px; }
+        #timer { font-size: 1.5em; color: red; margin-top: 10px; display: none; }
+        #score { font-size: 1.5em; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Lexical Decision Task</h1>
+    <p>Press Start when you are ready.</p>
+    <button id="startButton" onclick="startTask()">Start</button>
+    
+    <div id="game" style="display: none;">
+        <p>Is this a real word?</p>
+        <div id="word">Loading...</div>
+        <p id="timer">Time left: 1s</p>
+        <button onclick="checkAnswer(true)">YES</button>
+        <button onclick="checkAnswer(false)">NO</button>
+        <p id="result"></p>
+        <p id="score"></p>
+    </div>
+
+    <script>
+        const words = [
+            { word: "Apple", isWord: true }, { word: "Frindle", isWord: false },
+            { word: "Table", isWord: true }, { word: "Bloffen", isWord: false },
+            { word: "Chair", isWord: true }, { word: "Skrint", isWord: false },
+            { word: "Pencil", isWord: true }, { word: "Vrenk", isWord: false },
+            { word: "House", isWord: true }, { word: "Drimble", isWord: false },
+            { word: "Window", isWord: true }, { word: "Sporf", isWord: false },
+            { word: "Elephant", isWord: true }, { word: "Jarglep", isWord: false },
+            { word: "Banana", isWord: true }, { word: "Blipnock", isWord: false },
+            { word: "Book", isWord: true }, { word: "Gloft", isWord: false },
+            { word: "Flower", isWord: true }, { word: "Zograt", isWord: false },
+            { word: "Planet", isWord: true }, { word: "Dremic", isWord: false },
+            { word: "Guitar", isWord: true }, { word: "Thornic", isWord: false },
+            { word: "Castle", isWord: true }, { word: "Glooven", isWord: false },
+            { word: "Shadow", isWord: true }, { word: "Spidric", isWord: false },
+            { word: "Rocket", isWord: true }, { word: "Blorft", isWord: false }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let timeLeft = 1;
+        let timer;
+
+        function startTask() {
+            document.getElementById("startButton").style.display = "none";
+            document.getElementById("game").style.display = "block";
+            showWord();
+        }
+
+        function showWord() {
+            if (currentIndex < words.length) {
+                document.getElementById("word").textContent = words[currentIndex].word;
+                document.getElementById("word").style.display = "block";
+                document.getElementById("result").textContent = "";
+                document.getElementById("timer").style.display = "block";
+                timeLeft = 1;
+                updateTimer();
+                timer = setInterval(countdown, 1000);
+            } else {
+                document.getElementById("word").textContent = "Task Complete!";
+                document.getElementById("result").textContent = `Final Score: ${score} / ${words.length}`;
+                document.getElementById("timer").style.display = "none";
+                document.querySelectorAll("button").forEach(btn => btn.style.display = "none");
+            }
+        }
+
+        function countdown() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateTimer();
+            } else {
+                clearInterval(timer);
+                checkAnswer(null);
+            }
+        }
+
+        function updateTimer() {
+            document.getElementById("timer").textContent = `Time left: ${timeLeft}s`;
+        }
+
+        function checkAnswer(response) {
+            clearInterval(timer);
+            if (response !== null) {
+                let correct = words[currentIndex].isWord === response;
+                if (correct) score++;
+                document.getElementById("result").textContent = correct ? "Correct!" : "Wrong!";
+            } else {
+                document.getElementById("result").textContent = "Time's up!";
+            }
+            
+            currentIndex++;
+            setTimeout(showWord, 1000);
+        }
+    </script>
+
+</body>
+</html>
